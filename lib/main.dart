@@ -48,7 +48,12 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(seconds: 2),
+    vsync: this,
+  )..repeat(reverse: true);
   void _moveToNextPage() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
@@ -56,8 +61,26 @@ class _MyHomePageState extends State<MyHomePage> {
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const ImageDetailView()));
+      // Navigator.push(context,
+      //     MaterialPageRoute(builder: (context) => const ImageDetailView()));
+
+      Navigator.push(
+          context,
+          PageRouteBuilder(
+              opaque: false,
+              pageBuilder: (BuildContext context, _, __) {
+                return const ImageDetailView();
+              },
+              transitionsBuilder:
+                  (___, Animation<double> animation, ____, Widget child) {
+                return SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(-1.0, 0.0),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                );
+              }));
     });
   }
 
